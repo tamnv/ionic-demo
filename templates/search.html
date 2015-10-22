@@ -1,0 +1,34 @@
+<ion-view view-title="Search" hide-nav-bar="true">
+  <ion-header-bar align-title="left" class="item-input-inset">
+    <button class="button button-clear" ng-click = "goBack()">
+      <i class="icon ion-android-arrow-back placeholder-icon" ></i>
+    </button>
+    <label class="item-input-wrapper">
+      <input type="search" ng-model = "txt_search" placeholder = "Search tweets" ng-keypress = "searchTweets()">
+    </label>
+    <button class="button button-clear" ng-click = "emptySearch()">
+      <i class="icon ion-ios-close-empty placeholder-icon" ></i>
+    </button>
+  </ion-header-bar>
+  <ion-content class = "has-header padding">
+    <ion-refresher pulling-text="Pull to refresh" on-refresh="searchRefresh()"></ion-refresher>
+    <ion-list>
+      <ion-item ng-repeat = "result in resultsData">
+       <div class="row">
+        <div class="col">
+          <a href = "{{result.url}}"><img src = "{{result.profile_image_url}}"/></a>
+        </div>
+        <div class="col col-75">
+          <div class = "name"><a href = "{{result.url}}" >{{result.name}}</a></div>
+          <div class = "scree-name date">
+            <a href = {{result.url}}>@{{result.screen_name}}</a> - {{result.created_at}}
+          </div>
+        </div>
+      </div>
+      <div class = "row">
+        <p class = "description">{{result.description}}</p>
+      </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
