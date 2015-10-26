@@ -38,7 +38,11 @@ angular.module('starter.controllers', [])
 }])
 
 // Twitter List Controller.
-.controller('tweetsListCtrl', ['$scope', '$http', '$ionicPlatform', 'TwitterService', function($scope, $http, $ionicPlatform, TwitterService){
+.controller('tweetsListCtrl', ['$scope', '$http', '$ionicPlatform', 'TwitterService',function(
+  $scope,
+  $http,
+  $ionicPlatform,
+  TwitterService){
   // Function return geolocationSuccess.
   var geolocationSuccess = function(position) {
     $scope.latitude = position.coords.latitude;
@@ -48,17 +52,14 @@ angular.module('starter.controllers', [])
   var geolocationError = function(error) {
     console.log('Error code: ' + error.code + '\n' + 'message: '+ error.message);
   }
-  navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
-
-  // Get Location.
-  $scope.getLocation = function() {
-    navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
-    $scope.places = TwitterService.getTrendsCloset($scope.latitude, $scope.longitude);
-    // $scope.woeid = $scope.places.woeid;
-    console.log($scope.places.woeid);
-    // $scope.tweetsData = TwitterService.getTweetsNearBy($scope.woeid);
-    // console.log($scope.tweetsData);
+  var watch_id = navigator.geolocation.watchPosition(geolocationSuccess, geolocationError);
+  $scope.getCurrentLocation = function() {
+    TwitterService.getCurrentLocation($scope.latitude, $scope.longitude);
+    $scope.showHomeTimeline();
   }
+  // Check has location already.
+  console.log(TwitterService.hasLocation());
+  $scope.hasLocation = TwitterService.hasLocation();
 
   // 1
   $scope.correctTimestring = function(string) {
@@ -66,7 +67,7 @@ angular.module('starter.controllers', [])
   };
   // 2
   $scope.showHomeTimeline = function() {
-    $scope.tweetsData = TwitterService.getTweetsNearBy($scope.woeid);
+    $scope.tweetsData = TwitterService.getTweetsNearBy();
   };
   // Refresh content.
   $scope.doRefresh = function() {
@@ -77,12 +78,15 @@ angular.module('starter.controllers', [])
   //
   $ionicPlatform.ready(function() {
     if (TwitterService.isAuthenticated()) {
-      //$scope.showHomeTimeline();
+      if (TwitterService.hasLocation()) {
+        $scope.showHomeTimeline();
+      }
     } else {
-
       TwitterService.initialize().then(function(result) {
         if(result === true) {
-          //$scope.showHomeTimeline();
+          if (TwitterService.hasLocation()) {
+            $scope.showHomeTimeline();
+          }
         }
       });
     }
@@ -134,5 +138,4 @@ angular.module('starter.controllers', [])
       }
     }
   });
-
 }]);

@@ -9,7 +9,7 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
   var twitterKey = "STORAGE.TWITTER_KEY";
   var clientId = 'QpO3HvQjQkcbxvvlZOoQ';
   var clientSecret = 'g7Rsrn6hznqkhVQDIqqTfjM2GdLSEQfIoBLc3Row3w0';
-
+  var woeidKey = 'STORAGE.WOEID';
   // 2
   function storeUserToken(data) {
     window.localStorage.setItem(twitterKey, JSON.stringify(data));
@@ -49,6 +49,16 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
     $http.defaults.headers.common.Authorization = signatureObj.authorization_header;
   }
 
+  // Function sorte location id.
+  function storeLocation(data) {
+    window.localStorage.setItem(woeidKey, data);
+  }
+
+  // Function get location.
+  function getLocation() {
+    return window.localStorage.getItem(woeidKey);
+  }
+
   return {
     // 4
     initialize: function() {
@@ -70,17 +80,27 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
     isAuthenticated: function() {
       return getStoredToken() !== null;
     },
-    // Get Trends closest.
-    getTrendsCloset: function(latitude, longitude) {
-      var url_request = 'https://api.twitter.com/1.1/trends/closest.json';
-      createTwitterSignatureParams('GET', url_request, {lat: latitude, long: longitude});
-      return $resource(url_request,{lat: latitude,long: longitude}, {'query': {method:'GET', isArray: false}}).query();
+    // Check Location Ready.
+    hasLocation: function() {
+      return getLocation() !== null;
     },
-    // 6
-    getTweetsNearBy: function(woeid) {
-      var url_request = 'https://api.twitter.com/1.1/trends/place.json';
-      createTwitterSignatureParams('GET', url_request, {id: woeid});
-      return $resource(url_request,{id: woeid}).query();
+    // Get Location of current user.
+    getCurrentLocation: function(latitude, longitude) {
+      var url_request_place = 'https://api.twitter.com/1.1/trends/closest.json';
+      createTwitterSignatureParams('GET', url_request_place, {lat: latitude, long: longitude});
+      $resource(url_request_place,{lat: latitude,long: longitude}).query().$promise.then(function(data) {
+        window.localStorage.setItem(woeidKey, data.$promise.$$state.value[0].woeid);
+      }, function(error) {
+        console.log(error);
+      });
+    },
+    // Get Trends closest.
+    getTweetsNearBy: function() {
+      var woeid = window.localStorage.getItem(woeidKey);
+      var url_request_tweets = 'https://api.twitter.com/1.1/trends/place.json';
+      createTwitterSignatureParams('GET', url_request_tweets, {id: woeid});
+      return $resource(url_request_tweets,{id: woeid}).query();
+
     },
     // Call search twitter api.
     getTweets: function(keyword) {
