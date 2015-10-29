@@ -103,13 +103,14 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
 
     },
     // Call search twitter api.
-    getTweets: function(keyword) {
-      var search_url = 'https://api.twitter.com/1.1/users/search.json';
-      createTwitterSignatureParams('GET', search_url, {q: keyword});
-      return $resource(search_url,{q: keyword}).query();
+    getTweets: function(keyword, result_type) {
+      var search_url = 'https://api.twitter.com/1.1/search/tweets.json';
+      createTwitterSignatureParams('GET', search_url, {q: keyword, result_type: result_type});
+      return $resource(search_url,{q: keyword, result_type: result_type}, {'query': {method: 'GET', isArray: false }}).query();
     },
     storeUserToken: storeUserToken,
     getStoredToken: getStoredToken,
     createTwitterSignature: createTwitterSignature,
+    createTwitterSignatureParams: createTwitterSignatureParams,
   };
 });

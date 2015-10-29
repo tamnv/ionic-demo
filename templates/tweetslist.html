@@ -1,15 +1,19 @@
 <ion-view view-title="Tweets" data-ng-init="showHomeTimeline()">
   <ion-content class = "has-header padding">
     <ion-refresher pulling-text="Pull to refresh" on-refresh="doRefresh()"></ion-refresher>
-    <button class="button button-stable bar bar-header bar-stable" ng-hide = "hasLocation" ng-click = "getCurrentLocation()">
+    <button class="button button-stable bar bar-header bar-stable" ng-show = "isLogin" ng-hide = "hasLocation" ng-click = "getCurrentLocation()">
       Get current location.
     </button>
-    <h4 class="title">Trends Nearby</h4>
+    <button class="button button-stable bar bar-header bar-stable" ng-show = "hasLocation" ng-click = "getTrends()">
+      Get trends nearby.
+    </button>
+    <h4 class="title" ng-show="flagFirst">Trends Nearby</h4>
+    <h4 class = "message">{{message}}</h4>
     <ion-list>
       <ion-item ng-repeat = "tweet in tweetsData">
         <ion-list ng-if="tweet.trends">
           <ion-item ng-repeat = "post in tweet.trends">
-            {{post.name}}
+            <a ng-click = "searchHashtag(post.name)" href = "" >{{post.name}}</a>
           </ion-item>>
         </ion-list>
       </ion-item>

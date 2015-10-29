@@ -18,7 +18,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   $stateProvider
 
   .state('app', {
@@ -67,5 +67,5 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
   });
 
   $urlRouterProvider.otherwise('/app/tweetslist');
-
+  $ionicConfigProvider.tabs.position('bottom');
 });
