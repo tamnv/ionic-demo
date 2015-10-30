@@ -47,6 +47,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
       }
     }
   })
+  // Imprint page.
   .state('app.imprint', {
     url: '/imprint',
     views: {
@@ -56,6 +57,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter
       }
     }
   })
+  // Search page.
   .state('app.search', {
     url: '/search',
     views: {

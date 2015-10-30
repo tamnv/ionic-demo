@@ -1,11 +1,10 @@
-angular.module('starter.controllers', [])
-.controller('appCtrl', ['$scope', '$rootScope', '$ionicModal', '$timeout', 'TwitterService', '$state', '$ionicPopover', function($scope,
+angular.module('starter.controllers', ['angularMoment'])
+.controller('appCtrl', ['$scope', '$rootScope', 'TwitterService', '$state', '$ionicPopover', '$ionicSideMenuDelegate',function($scope,
   $rootScope,
-  $ionicModal,
-  $timeout,
   TwitterService,
   $state,
-  $ionicPopover ){
+  $ionicPopover,
+  $ionicSideMenuDelegate){
   $scope.loginData = {};
   // Init rootScope txt_search.
   $rootScope.txt_search = null;
@@ -57,7 +56,7 @@ angular.module('starter.controllers', [])
   $scope.closePopover = function() {
     $scope.popover.hide();
   };
-
+  // Refresh Tweets.
   $scope.refreshTweets = function() {
     $state.go($state.current, {}, {reload: true});
     $scope.closePopover();
@@ -69,7 +68,7 @@ angular.module('starter.controllers', [])
     $rootScope.resultType = 'recent';
     $scope.closePopover();
   }
-
+  // Set result type is popular.
   $scope.sortPopularTweets = function() {
     $rootScope.resultType = 'popular';
     $scope.closePopover();
@@ -79,6 +78,15 @@ angular.module('starter.controllers', [])
   $scope.search = function() {
     $state.go('app.search');
   };
+
+  // Control event click on each tab.
+  $scope.tabRedirect = function(state) {
+    $state.go(state);
+    if ($ionicSideMenuDelegate.isOpen(true)) {
+      $ionicSideMenuDelegate.toggleLeft();
+    }
+  }
+
 }])
 
 // Twitter List Controller.
@@ -111,18 +119,15 @@ angular.module('starter.controllers', [])
     $scope.showHomeTimeline();
     $rootScope.hasLocation = true;
   }
-
-  // 1
   $scope.correctTimestring = function(string) {
     return new Date(Date.parse(string));
   };
-
+  // Refresh Trends.
   $scope.getTrends = function() {
     $scope.showHomeTimeline();
     $scope.flagFirst = false;
   }
-
-  // 2
+  // Call service get trends nearby.
   $scope.showHomeTimeline = function() {
     $scope.tweetsData = TwitterService.getTweetsNearBy();
   };
@@ -131,12 +136,11 @@ angular.module('starter.controllers', [])
     $scope.showHomeTimeline();
     $scope.$broadcast('scroll.refreshComplete');
   };
-
+  // Search tweets with hash tag.
   $scope.searchHashtag = function(hashtag) {
     $rootScope.txt_search = hashtag;
     $state.go('app.search');
   }
-  //
   $ionicPlatform.ready(function() {
     if (TwitterService.isAuthenticated()) {
       if (TwitterService.hasLocation()) {
@@ -153,17 +157,10 @@ angular.module('starter.controllers', [])
     }
   });
 }])
-
 // About Page,
-.controller('aboutCtrl', ['$scope', function($scope){
-
-}])
-
+.controller('aboutCtrl', ['$scope', function($scope){}])
 // Imprint Page.
-.controller('imprintCtrl', ['$scope', function($scope){
-
-}])
-
+.controller('imprintCtrl', ['$scope', function($scope){}])
 // Search Controller.
 .controller('searchCtrl', ['$scope', '$rootScope', '$ionicHistory', '$ionicPlatform', '$state', 'TwitterService',function($scope,
   $rootScope,
@@ -175,6 +172,7 @@ angular.module('starter.controllers', [])
   $scope.emptySearch = function() {
     $scope.txt_search = '';
   }
+  // Back button on search.
   $scope.goBack = function() {
     $ionicHistory.goBack();
   }
@@ -191,7 +189,7 @@ angular.module('starter.controllers', [])
     $scope.showSearchResult($scope.txt_search);
     $scope.$broadcast('scroll.refreshComplete');
   }
-
+  // Show search result.
   $scope.showSearchResult = function(keyword) {
     $scope.resultsData = TwitterService.getTweets(keyword, $rootScope.resultType);
     console.log($scope.resultsData);

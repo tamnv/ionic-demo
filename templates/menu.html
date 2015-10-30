@@ -38,13 +38,13 @@
 </ion-side-menus>
 <ion-tabs class="tabs-positive tabs-icon-only">
 
-  <ion-tab title="Tweets" icon-on="ion-social-twitter-outline" icon-off="ion-social-twitter-outline" ui-sref="app.tweetslist">
+  <ion-tab title="Tweets" ng-click = "tabRedirect('app.tweetslist')" icon-on="ion-social-twitter-outline" icon-off="ion-social-twitter-outline">
   </ion-tab>
 
-  <ion-tab title="About" icon-on="ion-ios-help-outline" icon-off="ion-ios-help-outline" ui-sref="app.about">
+  <ion-tab title="About" ng-click = "tabRedirect('app.about')" icon-on="ion-ios-help-outline" icon-off="ion-ios-help-outline">
   </ion-tab>
 
-  <ion-tab title="Imprint" icon-on="ion-ios-information-outline" icon-off="ion-ios-information-outline" ui-sref="app.imprint">
+  <ion-tab title="Imprint" ng-click = "tabRedirect('app.imprint')" icon-on="ion-ios-information-outline" icon-off="ion-ios-information-outline">
   </ion-tab>
 
 </ion-tabs>

@@ -5,21 +5,20 @@
 */
 angular.module('starter.services', []).
 factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  $resource, $q){
-  // 1
+  // Set twitter api key.
   var twitterKey = "STORAGE.TWITTER_KEY";
   var clientId = 'QpO3HvQjQkcbxvvlZOoQ';
   var clientSecret = 'g7Rsrn6hznqkhVQDIqqTfjM2GdLSEQfIoBLc3Row3w0';
   var woeidKey = 'STORAGE.WOEID';
-  // 2
+  // Store token key.
   function storeUserToken(data) {
     window.localStorage.setItem(twitterKey, JSON.stringify(data));
   }
-
+  // Get token key.
   function getStoredToken() {
     return window.localStorage.getItem(twitterKey);
   }
-
-  // 3
+  // Create signature.
   function createTwitterSignature(method, url) {
     var token = angular.fromJson(getStoredToken());
     var oauthObject = {
@@ -33,8 +32,7 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
     var signatureObj = $cordovaOauthUtility.createSignature(method, url, oauthObject, {}, clientSecret, token.oauth_token_secret);
     $http.defaults.headers.common.Authorization = signatureObj.authorization_header;
   }
-
-  // Create Singature with request has params:
+  // Create Singature with request has params.
   function createTwitterSignatureParams(method, url, params) {
     var token = angular.fromJson(getStoredToken());
     var oauthObject = {
@@ -60,7 +58,7 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
   }
 
   return {
-    // 4
+    // Call login with oauth.
     initialize: function() {
       var deferred = $q.defer();
       var token = getStoredToken();
@@ -76,7 +74,7 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
       }
       return deferred.promise;
     },
-    // 5
+    // Check user login with Oauth.
     isAuthenticated: function() {
       return getStoredToken() !== null;
     },
@@ -84,7 +82,10 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
     hasLocation: function() {
       return getLocation() !== null;
     },
-    // Get Location of current user.
+    /**
+     * Get Location of current user.
+     * Twitter API: https://dev.twitter.com/rest/reference/get/trends/closest.
+     */
     getCurrentLocation: function(latitude, longitude) {
       var url_request_place = 'https://api.twitter.com/1.1/trends/closest.json';
       createTwitterSignatureParams('GET', url_request_place, {lat: latitude, long: longitude});
@@ -94,7 +95,10 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
         console.log(error);
       });
     },
-    // Get Trends closest.
+    /**
+     * Get Trends closest.
+     * Twitter API: https://dev.twitter.com/rest/reference/get/trends/place.
+     */
     getTweetsNearBy: function() {
       var woeid = window.localStorage.getItem(woeidKey);
       var url_request_tweets = 'https://api.twitter.com/1.1/trends/place.json';
@@ -102,11 +106,14 @@ factory('TwitterService', function($cordovaOauth, $cordovaOauthUtility, $http,  
       return $resource(url_request_tweets,{id: woeid}).query();
 
     },
-    // Call search twitter api.
+    /**
+     * Call search twitter api.
+     * https://dev.twitter.com/rest/reference/get/search/tweets.
+     */
     getTweets: function(keyword, result_type) {
       var search_url = 'https://api.twitter.com/1.1/search/tweets.json';
-      createTwitterSignatureParams('GET', search_url, {q: keyword, result_type: result_type});
-      return $resource(search_url,{q: keyword, result_type: result_type}, {'query': {method: 'GET', isArray: false }}).query();
+      createTwitterSignatureParams('GET', search_url, {q: keyword, result_type: result_type, include_entities: false, count: 100});
+      return $resource(search_url,{q: keyword, result_type: result_type, include_entities: false, count: 100}, {'query': {method: 'GET', isArray: false }}).query();
     },
     storeUserToken: storeUserToken,
     getStoredToken: getStoredToken,

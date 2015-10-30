@@ -14,6 +14,7 @@
   </ion-header-bar>
   <ion-content class = "has-header padding">
     <ion-refresher pulling-text="Pull to refresh" on-refresh="searchRefresh()"></ion-refresher>
+    <div ng-show="resultsData.statuses.length == 0">Loading tweets...</div>
     <ion-list>
       <ion-item ng-repeat = "result in resultsData.statuses">
        <div class="row">
@@ -23,13 +24,11 @@
         <div class="col col-75">
           <div class = "name"><a href = "#" ng-click="openBrowser(result.user.url)">{{result.user.name}}</a></div>
           <div class = "scree-name date">
-            <a href = "#" ng-click="openBrowser(result.user.url)">@{{result.screen_name}}</a> - {{result.created_at}}
+            <a href = "#" ng-click="openBrowser(result.user.url)">@{{result.user.screen_name}}</a> - <span am-time-ago="result.created_at" ></span>
           </div>
         </div>
       </div>
-      <div class = "row">
-        <p class = "description">{{result.text}}</p>
-      </div>
+      <pre>{{result.text}}</pre>
       </ion-item>
     </ion-list>
   </ion-content>
